@@ -5,6 +5,8 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --primary: #3b82f6; /* This is the color used for the button background */
+  --disabled-foreground: #a1a1a1;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -18,4 +20,40 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Add button styling */
+.button {
+  @apply bg-primary text-white font-bold py-2 px-4 rounded mb-4;
+}
+
+/* Add disabled button styling */
+.button:disabled {
+  background-color: rgba(59, 130, 246, 0.5); /* 50% opacity of the primary color */
+  color: var(--disabled-foreground);
+  cursor: not-allowed;
+}
+
+/* Add dropdown styling */
+.input {
+  @apply border border-gray-300 rounded py-2 px-4 mb-4;
+}
+
+/* Add datalist styling */
+datalist {
+  @apply border border-gray-300 rounded py-2 px-4 mb-4;
+  background-color: var(--background);
+}
+
+input[list] {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+h1 {
+  @apply text-4xl font-bold mb-4;
+}
+
+p {
+  @apply text-lg mb-8;
 }
