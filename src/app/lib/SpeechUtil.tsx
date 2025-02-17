@@ -34,9 +34,7 @@ export default class SpeechUtil {
     let utterances: SpeechSynthesisUtterance[] = [];
 
     parts.forEach((part, index) => {
-        if (index > 0) {
-            utterances.push(this.createSpellingWordUtterance(word));
-        }
+        utterances.push(this.createSpellingWordUtterance(word));
 
       const utterance = new SpeechSynthesisUtterance(part);
       utterance.rate = this.sentenceRate;

@@ -125,3 +125,8 @@ p {
   flex: 1;
   border: 1px solid #d1d5db; /* Add grey border */
 }
+
+/* Add word-prompt styling */
+.word-prompt {
+  @apply text-2xl border rounded border-foreground p-4 mb-4;
+}
