@@ -37,6 +37,10 @@ body {
 /* Add dropdown styling */
 .input {
   @apply border border-gray-300 rounded py-2 px-4 mb-4;
+  background-color: var(--background);
+  color: var(--foreground);
+  width: calc(100% - 2rem); /* Full width minus margin */
+  margin: 0.5rem; /* Margin on either side */
 }
 
 /* Add datalist styling */
@@ -50,10 +54,74 @@ input[list] {
   color: var(--foreground);
 }
 
+/* Add ListBox styling */
+.listbox {
+  max-width: 100%;
+  margin: 0 auto;
+  width: calc(100% - 2rem);
+  margin: 0.5rem;
+}
+.listbox ul {
+  border: 1px solid var(--foreground);
+  padding: 8px;
+  border-radius: 4px;
+  list-style-type: none;
+  padding: 0;
+  margin-bottom: 16px;
+}
+.listbox li {
+  padding: 4px 8px;
+  cursor: pointer;
+}
+.listbox li:hover {
+  color: var(--primary);
+}
+.listbox li.selected {
+  background-color: var(--foreground);
+  color: var(--background);
+}
+.listbox .buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
 h1 {
   @apply text-4xl font-bold mb-4;
 }
 
 p {
   @apply text-lg mb-8;
+}
+
+/* Add container styling */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+/* Update grid styling to ensure columns stretch to fill the screen */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Update column styling to add a full border all around */
+.column {
+  padding: 1rem;
+  border-radius: 0.5rem;
+  flex: 1;
+  border: 1px solid #d1d5db; /* Add grey border */
 }

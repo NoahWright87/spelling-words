@@ -13,8 +13,8 @@ export default function Home() {
   useEffect(() => {
     // Fetch users from AppState
     const userNames = AppState.getInstance().users.map(user => user.name);
-    setUsers(userNames);
-  }, []);
+      setUsers(userNames);
+      }, []);
 
   const handleLogin = () => {
     let userIndex = users.indexOf(name);
@@ -44,6 +44,9 @@ export default function Home() {
       </datalist>
       <button className="button mt-4" disabled={!name} onClick={handleLogin}>
         Login
+      </button>
+      <button className="button mt-4" onClick={() => router.push('/word-setup')}>
+        Setup
       </button>
     </div>
   );
