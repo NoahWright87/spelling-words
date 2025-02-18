@@ -16,10 +16,41 @@
   }
 }
 
+/* Global Styles */
+
 body {
+  font-family: var(--font-geist-sans), sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Add header styling */
+.header {
+  padding: 1rem;
+  border-bottom: 1px solid var(--foreground);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  margin: 0 auto;
+}
+
+.user-name {
+  margin-left: auto;
+}
+
+/* Add footer styling */
+footer {
+  border-top: 1px solid var(--foreground-color);
+  position: sticky;
+  bottom: 0;
+  padding: 1rem;
+  text-align: center;
 }
 
 /* Add button styling */

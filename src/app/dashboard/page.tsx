@@ -7,6 +7,8 @@ import '../../app/globals.css';
 import { SpellingWordList } from '@/data/SpellingWordList';
 import ListBox from '../components/ListBox';
 import { useRouter } from 'next/navigation';
+import PerformanceWidget from '../components/PerformanceWidget';
+import { SpellingWordPerformance } from '@/data/SpellingWordPerformance';
 
 export default function Dashboard() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -138,6 +140,9 @@ export default function Dashboard() {
         </div>
         <div className="column">
           <h2>Stats {selectedList ? `- ${selectedList.name}` : ''}</h2>
+          {selectedList && (
+            <PerformanceWidget performanceList={currentUser.getPerformanceForList(selectedList.name)} />
+          )}
           <button className="button" onClick={handlePracticeClick}>Practice</button>
         </div>
       </div>

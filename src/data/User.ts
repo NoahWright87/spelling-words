@@ -1,20 +1,30 @@
-import { SpellingWordList } from "./SpellingWordList";
+import { SpellingWordListPerformance } from './SpellingWordListPerformance';
 
 export class User {
-  constructor(public name: string, public spellingWordLists: { [key: string]: SpellingWordList } = {}) {}
+  constructor(public name: string, public spellingWordLists: { [key: string]: SpellingWordListPerformance } = {}) {}
 
-  addSpellingWordList(list: SpellingWordList) {
-    this.spellingWordLists[list.name] = list;
+  // addSpellingWordList(listName: string) {
+  //   if (!this.spellingWordLists[listName]) {
+  //     this.spellingWordLists[listName] = new SpellingWordListPerformance();
+  //   }
+  // }
+
+  // getSpellingWordListKeys(): string[] {
+  //   return Object.keys(this.spellingWordLists);
+  // }
+
+  getPerformanceForList(listName: string): SpellingWordListPerformance {
+    if (!this.spellingWordLists[listName]) {
+      this.spellingWordLists[listName] = new SpellingWordListPerformance();
+    }
+    return this.spellingWordLists[listName];
   }
 
-  getSpellingWordListKeys(): string[] {
-    return Object.keys(this.spellingWordLists);
-  }
-
-  createNewSpellingWordList(): string {
-    const newKey = `New${Date.now()}`;
-    const newList = new SpellingWordList(newKey);
-    this.addSpellingWordList(newList);
-    return newKey;
+  recordPerformance(listName: string, newPerformance: SpellingWordListPerformance) {
+    if (!newPerformance) return;
+    
+    const pastPerformance = this.getPerformanceForList(listName);
+    pastPerformance.combineWith(newPerformance);
+    this.spellingWordLists[listName] = pastPerformance;
   }
 }
