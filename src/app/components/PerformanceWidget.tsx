@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { SpellingWordListPerformance } from '@/data/SpellingWordListPerformance';
 import '../../app/globals.css';
 

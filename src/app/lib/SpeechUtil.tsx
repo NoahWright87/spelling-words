@@ -31,9 +31,9 @@ export default class SpeechUtil {
         .replace(/%%/g, ' %% ')
         .split('%%');
 
-    let utterances: SpeechSynthesisUtterance[] = [];
+    const utterances: SpeechSynthesisUtterance[] = [];
 
-    parts.forEach((part, index) => {
+    parts.forEach((part) => {
         utterances.push(this.createSpellingWordUtterance(word));
 
       const utterance = new SpeechSynthesisUtterance(part);

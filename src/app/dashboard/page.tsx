@@ -8,7 +8,6 @@ import { SpellingWordList } from '@/data/SpellingWordList';
 import ListBox from '../components/ListBox';
 import { useRouter } from 'next/navigation';
 import PerformanceWidget from '../components/PerformanceWidget';
-import { SpellingWordPerformance } from '@/data/SpellingWordPerformance';
 
 export default function Dashboard() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);

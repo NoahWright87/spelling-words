@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import React from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { AppState } from '../../data/AppState';
 import { SpellingWordList } from '../../data/SpellingWordList';
@@ -8,17 +9,15 @@ import { SpellingWordPerformance } from '../../data/SpellingWordPerformance';
 import '../../app/globals.css';
 import SpeechUtil from '../lib/SpeechUtil';
 
-// Define the type for practice settings
-interface PracticeSettings {
-  listName: string;
-  showBlanks: boolean;
-  goal: number;
-  streakRequired: number;
-  startingHints: number;
-  hintReduction: number;
+export default function Practice() {
+  return (
+    <React.Suspense fallback={<div>Loading...</div>}>
+      <PracticeInner />
+    </React.Suspense>
+  );
 }
 
-export default function Practice() {
+function PracticeInner() {
   const searchParams = useSearchParams();
   const listName = searchParams.get('listName');
   const showBlanks = searchParams.get('showBlanks') === 'true';
@@ -33,28 +32,7 @@ export default function Practice() {
   const [userInput, setUserInput] = useState<string>('');
   const [hintIndices, setHintIndices] = useState<Set<number>>(new Set());
 
-  useEffect(() => {
-    if (listName) {
-      const appState = AppState.getInstance();
-      const list = appState.spellingWordLists[listName];
-      setWordList(list || null);
-      if (list) {
-        const initialPerformance: { [word: string]: SpellingWordPerformance } = {};
-        list.words.forEach(word => {
-          initialPerformance[word.word] = new SpellingWordPerformance(word.word);
-        });
-        setPerformance(initialPerformance);
-      }
-    }
-  }, [listName]);
-
-  useEffect(() => {
-    if (wordList) {
-      pickRandomWord();
-    }
-  }, [wordList]);
-
-  const pickRandomWord = () => {
+  const pickRandomWord = useCallback(() => {
     if (wordList) {
       const unmasteredWords = wordList.words.filter(word => !performance[word.word]?.isMastered);
       if (unmasteredWords.length === 0) {
@@ -76,7 +54,28 @@ export default function Practice() {
 
       SpeechUtil.sayExampleSentence(word.word, word.exampleSentence);
     }
-  };
+  }, [wordList, performance, startingHints, hintReduction]);
+
+  useEffect(() => {
+    if (listName) {
+      const appState = AppState.getInstance();
+      const list = appState.spellingWordLists[listName];
+      setWordList(list || null);
+      if (list) {
+        const initialPerformance: { [word: string]: SpellingWordPerformance } = {};
+        list.words.forEach(word => {
+          initialPerformance[word.word] = new SpellingWordPerformance(word.word);
+        });
+        setPerformance(initialPerformance);
+      }
+    }
+  }, [listName]);
+
+  useEffect(() => {
+    if (wordList) {
+      pickRandomWord();
+    }
+  }, [wordList, pickRandomWord]);
 
   const handleSubmit = () => {
     if (!userInput.trim()) {

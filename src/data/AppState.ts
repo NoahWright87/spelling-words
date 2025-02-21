@@ -38,11 +38,11 @@ export class AppState {
     console.log('Loaded state:', state);
 
     if (state) {
-      const { users, currentUserIndex, spellingWordLists } = JSON.parse(state);
-
+      const { users, currentUserIndex, spellingWordLists } = JSON.parse(state) as { users: User[], currentUserIndex: number | null, spellingWordLists: { [key: string]: SpellingWordList } };
+      
       // Load users, creating defaults if none were already stored
       if (users) {
-        this.users = users.map((user: any) => new User(user.name, user.spellingWordLists));
+        this.users = users.map((user: User) => new User(user.name, user.spellingWordLists));
       } else {
         this.users = [];
       }
@@ -52,7 +52,7 @@ export class AppState {
       // Load spelling word lists, creating defaults if none were already stored
       if (spellingWordLists) {
         this.spellingWordLists = Object.fromEntries(
-          Object.entries(spellingWordLists).map(([key, list]: [string, any]) => [key, new SpellingWordList(list.name, list.words)])
+          Object.entries(spellingWordLists).map(([key, list]) => [key, new SpellingWordList(list.name, list.words)])
         );
       } else {
         this.spellingWordLists = {};

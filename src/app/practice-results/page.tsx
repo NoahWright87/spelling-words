@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { AppState } from '../../data/AppState';
 import { SpellingWordList } from '../../data/SpellingWordList';
@@ -8,6 +8,11 @@ import { SpellingWordPerformance } from '../../data/SpellingWordPerformance';
 import '../../app/globals.css';
 
 export default function PracticeResults() {
+    return <Suspense fallback={<div>Loading...</div>}>
+        <PracticeResultsInner />
+    </Suspense>;
+}
+function PracticeResultsInner() {
   const searchParams = useSearchParams();
   const listName = searchParams.get('listName');
 
