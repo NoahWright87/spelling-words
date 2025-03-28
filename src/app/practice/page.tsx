@@ -17,6 +17,15 @@ export default function Practice() {
   );
 }
 
+function repeatExampleSentence(currentWord: string | null, wordList: SpellingWordList | null) {
+  if (currentWord) {
+    const word = wordList?.words.find(w => w.word === currentWord);
+    if (word) {
+      SpeechUtil.sayExampleSentence(word.word, word.exampleSentence);
+    }
+  }
+}
+
 function PracticeInner() {
   const searchParams = useSearchParams();
   const listName = searchParams.get('listName');
@@ -52,7 +61,7 @@ function PracticeInner() {
       }
       setHintIndices(newHintIndices);
 
-      SpeechUtil.sayExampleSentence(word.word, word.exampleSentence);
+      repeatExampleSentence(word.word, wordList);
     }
   }, [wordList, performance, startingHints, hintReduction]);
 
@@ -79,12 +88,7 @@ function PracticeInner() {
 
   const handleSubmit = () => {
     if (!userInput.trim()) {
-      if (currentWord) {
-        const word = wordList?.words.find(w => w.word === currentWord);
-        if (word) {
-          SpeechUtil.sayExampleSentence(word.word, word.exampleSentence);
-        }
-      }
+      repeatExampleSentence(currentWord, wordList);
       return;
     }
     if (currentWord) {
@@ -131,6 +135,8 @@ function PracticeInner() {
     } else {
       return blanks.join('');
     }
+
+    repeatExampleSentence(currentWord, wordList);
   };
 
   if (!wordList) {
