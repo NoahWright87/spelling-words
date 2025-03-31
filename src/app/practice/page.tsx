@@ -41,19 +41,27 @@ function PracticeInner() {
   const [userInput, setUserInput] = useState<string>('');
   const [hintIndices, setHintIndices] = useState<Set<number>>(new Set());
 
+  const isWordMastered = useCallback((perf: SpellingWordPerformance) => {
+    return perf.streak >= streakRequired && perf.correct >= goal;
+  }, [streakRequired, goal]);
+
   const pickRandomWord = useCallback(() => {
     if (wordList) {
-      const unmasteredWords = wordList.words.filter(word => !performance[word.word]?.isMastered);
+      const unmasteredWords = wordList.words.filter(word => !isWordMastered(performance[word.word]));
       if (unmasteredWords.length === 0) {
-        alert('Congratulations! All words are mastered.');
-        window.location.href = '/dashboard';
+        console.log('Quiz finished, saving performance...');
+        console.log('Current performance state:', performance);
+        const appState = AppState.getInstance();
+        appState.savePerformance(performance);
+        console.log('Performance saved, navigating to results...');
+        window.location.href = `/practice-results?listName=${encodeURIComponent(listName || '')}`;
         return;
       }
       const randomIndex = Math.floor(Math.random() * unmasteredWords.length);
       const word = unmasteredWords[randomIndex];
       setCurrentWord(word.word);
 
-      const totalHints = Math.max(startingHints - (performance[word.word]?.currentStreak * hintReduction), 0);
+      const totalHints = Math.max(startingHints - (performance[word.word]?.streak * hintReduction), 0);
       const newHintIndices = new Set<number>();
       while (newHintIndices.size < totalHints) {
         const randomIndex = Math.floor(Math.random() * word.word.length);
@@ -63,7 +71,7 @@ function PracticeInner() {
 
       repeatExampleSentence(word.word, wordList);
     }
-  }, [wordList, performance, startingHints, hintReduction]);
+  }, [wordList, performance, startingHints, hintReduction, listName, isWordMastered]);
 
   useEffect(() => {
     if (listName) {
@@ -93,18 +101,16 @@ function PracticeInner() {
     }
     if (currentWord) {
       const performanceEntry = performance[currentWord];
-      performanceEntry.currentAttempts += 1;
+      performanceEntry.attempts += 1;
       if (userInput.trim().toLowerCase() === currentWord.toLowerCase()) {
-        performanceEntry.correctSpellings += 1;
-        performanceEntry.currentStreak += 1;
+        performanceEntry.correct += 1;
+        performanceEntry.streak += 1;
         alert('Correct!');
       } else {
-        performanceEntry.currentStreak = 0;
+        performanceEntry.streak = 0;
         alert('Incorrect!');
       }
-      performanceEntry.isMastered = performanceEntry.currentStreak >= streakRequired && performanceEntry.correctSpellings >= goal;
       setPerformance({ ...performance, [currentWord]: performanceEntry });
-
     }
     setUserInput('');
     pickRandomWord();

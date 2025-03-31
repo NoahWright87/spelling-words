@@ -8,9 +8,13 @@ export class SpellingWordListPerformance {
   }
 
   combineWith(other: SpellingWordListPerformance) {
+    console.log('combineWith called with:', other);
+    console.log('Current performances:', this.performances);
     other.performances.forEach((perf, word) => {
+      console.log(`Processing word ${word}:`, perf);
       if (!this.performances.has(word)) {
         this.performances.set(word, perf);
+        console.log(`Added new performance for ${word}`);
       } else {
         const existing = this.performances.get(word);
         if (existing) {
@@ -23,19 +27,26 @@ export class SpellingWordListPerformance {
           if (perf.currentStreak > existing.bestStreak) {
             existing.bestStreak = perf.currentStreak;
           }
+          console.log(`Updated existing performance for ${word}:`, existing);
         }
       }
     });
+    console.log('Final performances:', this.performances);
   }
 
   addWord(word: string) {
+    console.log(`Adding word ${word}`);
     if (!this.performances.has(word)) {
       this.performances.set(word, new SpellingWordPerformance(word));
+      console.log(`Added new performance for ${word}`);
     }
+    console.log('Current performances:', this.performances);
   }
 
   getPerformance(word: string): SpellingWordPerformance | undefined {
-    return this.performances.get(word);
+    const perf = this.performances.get(word);
+    console.log(`Getting performance for ${word}:`, perf);
+    return perf;
   }
 
   getAverageCurrentCorrectPercentage(): number {
@@ -58,5 +69,11 @@ export class SpellingWordListPerformance {
 
   getMaxStreak(): number {
     return Math.max(...Array.from(this.performances.values()).map(perf => perf.bestStreak), 0);
+  }
+
+  // Method to get all performances for reconstruction
+  getAllPerformances(): Map<string, SpellingWordPerformance> {
+    console.log('Getting all performances:', this.performances);
+    return new Map(this.performances);
   }
 }

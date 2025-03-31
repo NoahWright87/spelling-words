@@ -1,53 +1,99 @@
 "use client";
 
-import { AppState } from '../data/AppState';
 import { useEffect, useState } from "react";
-import { useRouter } from 'next/navigation';
-import { User } from '../data/User';
+import { useRouter } from "next/navigation";
+import { AppState } from "../data/AppState";
+import { UserCard } from "../components/UserCard";
 
 export default function Home() {
   const [users, setUsers] = useState<string[]>([]);
-  const [name, setName] = useState("");
+  const [editMode, setEditMode] = useState(false);
+  const [deckCount, setDeckCount] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
-    // Fetch users from AppState
-    const userNames = AppState.getInstance().users.map(user => user.name);
-      setUsers(userNames);
-      }, []);
+    const appState = AppState.getInstance();
+    const userNames = appState.users.map((user) => user.name);
+    setUsers(userNames);
+    setDeckCount(Object.keys(appState.spellingWordLists).length);
+    
+    // Log out current user when landing on home page
+    appState.setCurrentUser(-1);
+  }, []);
 
-  const handleLogin = () => {
-    let userIndex = users.indexOf(name);
-    if (userIndex === -1) {
-      const newUser = new User(name);
-      AppState.getInstance().addUser(newUser);
-      userIndex = AppState.getInstance().users.length - 1;
+  const navigateToUserPage = (userName?: string) => {
+    if (userName) {
+      if (editMode) {
+        router.push(`/user?name=${encodeURIComponent(userName)}`);
+      } else {
+        const appState = AppState.getInstance();
+        const userIndex = appState.users.findIndex(u => u.name === userName);
+        if (userIndex !== -1) {
+          appState.setCurrentUser(userIndex);
+          router.push(`/dashboard?name=${encodeURIComponent(userName)}`);
+        }
+      }
+    } else {
+      router.push(`/user`);
     }
-    AppState.getInstance().setCurrentUser(userIndex);
-    router.push('/dashboard');
+  };
+
+  const handleDelete = (userName: string) => {
+    if (confirm(`Are you sure you want to delete ${userName}?`)) {
+      const appState = AppState.getInstance();
+      appState.deleteUser(userName);
+      setUsers(appState.users.map((user) => user.name));
+    }
+  };
+
+  const handleHelp = () => {
+    alert("Create 'decks' of spelling words, then make a user, then practice!");
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-8">
-      <h1>Pick your name or type it in:</h1>
-      <input
-        list="names"
-        name="name"
-        className="input"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <datalist id="names">
-        {users.map((name, index) => (
-          <option key={index} value={name} />
-        ))}
-      </datalist>
-      <button className="button mt-4" disabled={!name} onClick={handleLogin}>
-        Login
-      </button>
-      <button className="button mt-4" onClick={() => router.push('/word-setup')}>
-        Setup
-      </button>
+    <div className="flex flex-col items-center">
+      <h1 className="header">Welcome to Spelling Cards! 🃏</h1>
+      
+      <div className="mb-8 flex gap-4">
+        <button
+          onClick={() => router.push('/decks')}
+          className={`large-button ${deckCount === 0 ? 'bg-green-500 hover:bg-green-600' : 'bg-blue-500 hover:bg-blue-600'} text-white`}
+        >
+          {deckCount === 0 ? 'Create Spelling Deck' : `${deckCount} Spelling Deck${deckCount === 1 ? '' : 's'}`}
+        </button>
+        <button
+          className="large-button"
+          onClick={handleHelp}
+        >
+          ❓
+        </button>
+      </div>
+
+      {deckCount > 0 && (
+        <>
+          <h2 className="header">Who's playing?</h2>
+          <div className="user-buttons">
+            {users.map((name, index) => (
+              <UserCard
+                key={index}
+                name={name}
+                onSelect={navigateToUserPage}
+                onDelete={handleDelete}
+                showDelete={editMode}
+              />
+            ))}
+            <UserCard
+              onSelect={navigateToUserPage}
+            />
+            <button
+              className="large-button"
+              onClick={() => setEditMode(!editMode)}
+            >
+              🛠️
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }

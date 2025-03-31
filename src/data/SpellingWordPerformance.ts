@@ -1,29 +1,29 @@
 export class SpellingWordPerformance {
   word: string;
-  currentAttempts: number;
-  correctSpellings: number;
-  currentStreak: number;
-  isMastered: boolean;
-  totalAttempts: number;
-  totalCorrect: number;
-  bestStreak: number;
+  attempts: number;
+  correct: number;
+  streak: number;
 
-  constructor(word: string) {
+  constructor(word: string, attempts: number = 0, correct: number = 0, streak: number = 0) {
     this.word = word;
-    this.currentAttempts = 0;
-    this.correctSpellings = 0;
-    this.currentStreak = 0;
-    this.isMastered = false;
-    this.totalAttempts = 0;
-    this.totalCorrect = 0;
-    this.bestStreak = 0;
+    this.attempts = attempts;
+    this.correct = correct;
+    this.streak = streak;
   }
 
-  getCurrentCorrectPercentage(): number {
-    return this.currentAttempts > 0 ? (this.correctSpellings / this.currentAttempts) * 100 : 0;
+  combineWith(other: SpellingWordPerformance, isCorrect: boolean) {
+    this.attempts += other.attempts;
+    this.correct += other.correct;
+    if (other.correct === other.attempts) {
+      // Combine streaks
+      this.streak = this.streak + other.streak;
+    } else {
+      // Otherwise, go with the larger streak
+      this.streak = Math.max(this.streak, other.streak);
+    }
   }
 
-  getTotalCorrectPercentage(): number {
-    return this.totalAttempts > 0 ? (this.totalCorrect / this.totalAttempts) * 100 : 0;
+  getPercentage(): number {
+    return this.attempts > 0 ? (this.correct / this.attempts) * 100 : 0;
   }
 }

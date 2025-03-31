@@ -3,9 +3,11 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f3f4f6;
+  --foreground: #1f2937;
   --primary: #3b82f6; /* This is the color used for the button background */
+  --success: #22c55e;
+  --error: #ef4444;
   --disabled-foreground: #a1a1a1;
 }
 
@@ -30,32 +32,92 @@ body {
 /* Add header styling */
 .header {
   padding: 1rem;
-  border-bottom: 1px solid var(--foreground);
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  position: relative;
+  min-height: 5.25rem;
+  border-bottom: 1px solid var(--foreground);
 }
 
 .title {
-  margin: 0 auto;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2.5rem;
+  line-height: 1;
+  margin: 0;
+  padding: 0;
 }
 
 .user-name {
   margin-left: auto;
+  font-size: 1rem;
+  font-weight: normal;
+  line-height: 1;
+  margin-top: 0.5rem;
+}
+
+.logout-button {
+  font-size: 1.5rem;
+  color: var(--error);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  margin-left: 1rem;
+  line-height: 1;
+  margin-top: 0.5rem;
+}
+
+.logout-button:hover {
+  opacity: 0.8;
 }
 
 /* Add footer styling */
-footer {
-  border-top: 1px solid var(--foreground-color);
-  position: sticky;
+.footer {
+  position: fixed;
   bottom: 0;
-  padding: 1rem;
+  left: 0;
+  right: 0;
+  border-top: 1px solid var(--foreground);
+  background-color: var(--background);
   text-align: center;
+  min-height: 1.5rem;
 }
 
 /* Add button styling */
 .button {
-  @apply bg-primary text-white font-bold py-2 px-4 rounded mb-4;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  border: none;
+  color: white;
+}
+
+.button:hover {
+  transform: translateY(-1px);
+}
+
+.button.save {
+  background-color: var(--success);
+}
+
+.button.save:hover {
+  background-color: #16a34a;
+}
+
+.button.cancel {
+  background-color: var(--error);
+}
+
+.button.cancel:hover {
+  background-color: #dc2626;
 }
 
 /* Add disabled button styling */
@@ -160,4 +222,186 @@ p {
 /* Add word-prompt styling */
 .word-prompt {
   @apply text-2xl border rounded border-foreground p-4 mb-4;
+}
+
+/* Global styles for the home page */
+
+.large-button {
+  font-size: 1.5rem;
+  padding: 1rem 2rem;
+  margin: 1rem;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.large-button:hover {
+  background-color: #005bb5;
+}
+
+.large-button:disabled {
+  /* background-color: #9ca3af; */
+  color: var(--disabled-foreground);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.large-button:disabled:hover {
+  background-color: #9ca3af;
+}
+
+.user-buttons {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.card {
+  position: relative;
+  background: var(--primary);
+  color: var(--foreground);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  width: 200px;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+  margin: 0 auto;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+.card-close-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #ef4444;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  cursor: pointer;
+  border: none;
+  padding: 0;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.card-close-button:hover {
+  background-color: #dc2626;
+}
+
+.card-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.card-footer {
+  width: 100%;
+  padding: 0.25rem 0 0 0;
+  border-top: 1px solid var(--background);
+  text-align: center;
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+.bg-success {
+  background: var(--success);
+}
+
+/* Practice Results Page Styles */
+.results-section {
+  margin: 2rem 0;
+  padding: 0.5rem;
+  border-radius: 8px;
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.result-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 6px;
+}
+
+.result-item .label {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.result-item .value {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.word-results {
+  margin: 2rem 0;
+}
+
+.word-results table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.word-results table th,
+.word-results table td {
+  border: 1px solid var(--foreground);
+  padding: 0.5rem;
+  text-align: center;
+}
+
+.word-results table th {
+  background-color: var(--primary);
+  color: var(--foreground);
+}
+
+.word-results table td:first-child {
+  text-align: left;
+}
+
+.done-button {
+  display: block;
+  margin: 2rem auto;
+  padding: 0.75rem 2rem;
+  font-size: 1.1rem;
+  background-color: var(--primary);
+  color: var(--foreground);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.done-button:hover {
+  background-color: #0056b3;
 }

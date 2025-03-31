@@ -1,21 +1,15 @@
 "use client";
 
-import { Suspense, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { AppState } from '../../data/AppState';
-import { SpellingWordList } from '../../data/SpellingWordList';
-import { SpellingWordPerformance } from '../../data/SpellingWordPerformance';
-import '../../app/globals.css';
+import { AppState } from '@/data/AppState';
+import { SpellingWordList } from '@/data/SpellingWordList';
+import { SpellingWordPerformance } from '@/data/SpellingWordPerformance';
+import Link from 'next/link';
 
 export default function PracticeResults() {
-    return <Suspense fallback={<div>Loading...</div>}>
-        <PracticeResultsInner />
-    </Suspense>;
-}
-function PracticeResultsInner() {
   const searchParams = useSearchParams();
   const listName = searchParams.get('listName');
-
   const [wordList, setWordList] = useState<SpellingWordList | null>(null);
   const [performance, setPerformance] = useState<{ [word: string]: SpellingWordPerformance }>({});
 
@@ -25,29 +19,79 @@ function PracticeResultsInner() {
       const list = appState.spellingWordLists[listName];
       setWordList(list || null);
       if (list) {
-        const initialPerformance: { [word: string]: SpellingWordPerformance } = {};
-        list.words.forEach(word => {
-          initialPerformance[word.word] = new SpellingWordPerformance(word.word);
-        });
-        setPerformance(initialPerformance);
+        const user = appState.getCurrentUser();
+        if (user) {
+          const currentPerformance = user.currentPerformance;
+          setPerformance(currentPerformance);
+        }
       }
     }
   }, [listName]);
 
-  if (!wordList) {
+  const calculateStats = () => {
+    if (!wordList) return null;
+
+    const totalWords = wordList.words.length;
+    const totalAttempts = Object.values(performance).reduce((sum, p) => sum + p.attempts, 0);
+    const totalCorrect = Object.values(performance).reduce((sum, p) => sum + p.correct, 0);
+    const accuracy = totalAttempts > 0 ? (totalCorrect / totalAttempts) * 100 : 0;
+
+    return {
+      totalWords,
+      totalAttempts,
+      totalCorrect,
+      accuracy
+    };
+  };
+
+  const stats = calculateStats();
+
+  if (!wordList || !stats) {
     return <div>Loading...</div>;
   }
 
   return (
     <div className="container">
-      <h1>Practice Results -- {wordList.name}</h1>
-      <ul>
-        {wordList.words.map(word => (
-          <li key={word.word}>
-            {word.word} - Correct: {performance[word.word]?.correctSpellings || 0}, Streak: {performance[word.word]?.currentStreak || 0}
-          </li>
-        ))}
-      </ul>
+      <h1>Practice Results for {wordList.name}</h1>
+      
+      <div className="results-section">
+        <div className="results-grid">
+          <p>Words: {stats.totalWords}</p>
+          <p>{stats.totalCorrect} / {stats.totalAttempts} ({stats.accuracy.toFixed(1)}%)</p>
+        </div>
+      </div>
+
+      <div className="word-results">
+        <table className="bordered">
+          <thead>
+            <tr>
+              <th>Word</th>
+              <th>Performance</th>
+              <th>Best Streak</th>
+            </tr>
+          </thead>
+          <tbody>
+            {wordList.words.map(word => {
+              const perf = performance[word.word] || new SpellingWordPerformance(word.word);
+              return (
+                <tr key={word.word}>
+                  <td>{word.word}</td>
+                  <td>
+                    {perf.correct} / {perf.attempts} ({perf.getPercentage().toFixed(1)}%)
+                  </td>
+                  <td>{perf.streak}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {/* <div className="button-container"> */}
+        <Link href="/dashboard" className="large-button">
+          Done
+        </Link>
+      {/* </div> */}
     </div>
   );
 }
