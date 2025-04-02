@@ -1,6 +1,9 @@
 import { SpellingWordPerformance } from './SpellingWordPerformance';
+import { SpellingWordListPerformance } from './SpellingWordListPerformance';
 
 export class User {
+  private spellingWordLists: { [key: string]: SpellingWordListPerformance } = {};
+
   constructor(
     public name: string,
     public currentPerformance: { [word: string]: SpellingWordPerformance } = {},
@@ -34,7 +37,7 @@ export class User {
     Object.entries(performance).forEach(([word, perf]) => {
       const existingTotal = this.totalPerformance[word];
       if (existingTotal) {
-        this.totalPerformance[word] = existingTotal.combineWith(perf);
+        existingTotal.combineWith(perf);
       } else {
         this.totalPerformance[word] = perf;
       }

@@ -18,14 +18,13 @@ export class SpellingWordListPerformance {
       } else {
         const existing = this.performances.get(word);
         if (existing) {
-          existing.currentAttempts = perf.currentAttempts;
-          existing.correctSpellings = perf.correctSpellings;
-          existing.currentStreak = perf.currentStreak;
-          existing.isMastered = perf.isMastered;
-          existing.totalAttempts += perf.currentAttempts;
-          existing.totalCorrect += perf.correctSpellings;
-          if (perf.currentStreak > existing.bestStreak) {
-            existing.bestStreak = perf.currentStreak;
+          existing.attempts = perf.attempts;
+          existing.correct = perf.correct;
+          existing.streak = perf.streak;
+          existing.attempts += perf.attempts;
+          existing.correct += perf.correct;
+          if (perf.streak > existing.streak) {
+            existing.streak = perf.streak;
           }
           console.log(`Updated existing performance for ${word}:`, existing);
         }
@@ -50,25 +49,25 @@ export class SpellingWordListPerformance {
   }
 
   getAverageCurrentCorrectPercentage(): number {
-    const total = Array.from(this.performances.values()).reduce((sum, perf) => sum + perf.getCurrentCorrectPercentage(), 0);
+    const total = Array.from(this.performances.values()).reduce((sum, perf) => sum + perf.getPercentage(), 0);
     return this.performances.size > 0 ? total / this.performances.size : 0;
   }
 
   getAverageTotalCorrectPercentage(): number {
-    const total = Array.from(this.performances.values()).reduce((sum, perf) => sum + perf.getTotalCorrectPercentage(), 0);
+    const total = Array.from(this.performances.values()).reduce((sum, perf) => sum + perf.getPercentage(), 0);
     return this.performances.size > 0 ? total / this.performances.size : 0;
   }
 
   getTotalAttempts(): number {
-    return Array.from(this.performances.values()).reduce((sum, perf) => sum + perf.totalAttempts, 0);
+    return Array.from(this.performances.values()).reduce((sum, perf) => sum + perf.attempts, 0);
   }
 
   getTotalCorrect(): number {
-    return Array.from(this.performances.values()).reduce((sum, perf) => sum + perf.totalCorrect, 0);
+    return Array.from(this.performances.values()).reduce((sum, perf) => sum + perf.correct, 0);
   }
 
   getMaxStreak(): number {
-    return Math.max(...Array.from(this.performances.values()).map(perf => perf.bestStreak), 0);
+    return Math.max(...Array.from(this.performances.values()).map(perf => perf.streak), 0);
   }
 
   // Method to get all performances for reconstruction

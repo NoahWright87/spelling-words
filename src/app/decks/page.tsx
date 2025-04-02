@@ -7,12 +7,18 @@ import { SpellingWordList } from '@/data/SpellingWordList';
 
 export default function DecksPage() {
   const router = useRouter();
-  const [appState] = useState(AppState.getInstance());
+  const [appState, setAppState] = useState<AppState | null>(null);
   const [decks, setDecks] = useState<SpellingWordList[]>([]);
 
   useEffect(() => {
-    setDecks(Object.values(appState.spellingWordLists));
-  }, [appState.spellingWordLists]);
+    setAppState(AppState.getInstance());
+  }, []);
+
+  useEffect(() => {
+    if (appState) {
+      setDecks(Object.values(appState.spellingWordLists));
+    }
+  }, [appState]);
 
   const handleDeckClick = (deckName: string) => {
     router.push(`/deck?name=${encodeURIComponent(deckName)}`);
@@ -23,6 +29,7 @@ export default function DecksPage() {
   };
 
   const handleDeleteDeck = (deckName: string) => {
+    if (!appState) return;
     if (confirm('Are you sure you want to delete this deck?')) {
       delete appState.spellingWordLists[deckName];
       appState.saveState();
@@ -33,6 +40,10 @@ export default function DecksPage() {
   const handleDone = () => {
     router.push('/');
   };
+
+  if (!appState) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="container max-w-5xl mx-auto">

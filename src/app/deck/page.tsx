@@ -1,22 +1,28 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { AppState } from '@/data/AppState';
 import { SpellingWordList } from '@/data/SpellingWordList';
 import { SpellingWord } from '@/data/SpellingWord';
 import WordRow from '../components/WordRow';
 
-export default function DeckPage() {
+function DeckPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [deckName, setDeckName] = useState('');
   const [isNewDeck, setIsNewDeck] = useState(true);
-  const [appState] = useState(AppState.getInstance());
+  const [appState, setAppState] = useState<AppState | null>(null);
   const [words, setWords] = useState<SpellingWord[]>([]);
   const [newWord, setNewWord] = useState<SpellingWord>(new SpellingWord('', ''));
 
   useEffect(() => {
+    setAppState(AppState.getInstance());
+  }, []);
+
+  useEffect(() => {
+    if (!appState) return;
+    
     const deckNameParam = searchParams.get('name');
     if (deckNameParam) {
       const deck = appState.spellingWordLists[deckNameParam];
@@ -26,9 +32,11 @@ export default function DeckPage() {
         setIsNewDeck(false);
       }
     }
-  }, [searchParams, appState.spellingWordLists]);
+  }, [searchParams, appState]);
 
   const handleSave = () => {
+    if (!appState) return;
+    
     if (!deckName.trim()) {
       alert('Please enter a deck name');
       return;
@@ -66,6 +74,10 @@ export default function DeckPage() {
     setWords([...words, word]);
     setNewWord(new SpellingWord('', ''));
   };
+
+  if (!appState) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="container max-w-5xl mx-auto">
@@ -122,5 +134,13 @@ export default function DeckPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function DeckPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <DeckPageContent />
+    </Suspense>
   );
 }

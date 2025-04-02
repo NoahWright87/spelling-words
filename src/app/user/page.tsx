@@ -1,12 +1,12 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { AppState } from "../../data/AppState";
 import { User } from "../../data/User";
 import { UserCard } from "../../components/UserCard";
 
-export default function UserPage() {
+function UserPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [user, setUser] = useState<User | null>(null);
@@ -82,5 +82,13 @@ export default function UserPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function UserPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <UserPageContent />
+    </Suspense>
   );
 }

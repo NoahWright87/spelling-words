@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { AppState } from '@/data/AppState';
 import { SpellingWordList } from '@/data/SpellingWordList';
 import { SpellingWordPerformance } from '@/data/SpellingWordPerformance';
 import Link from 'next/link';
 
-export default function PracticeResults() {
+function PracticeResultsContent() {
   const searchParams = useSearchParams();
   const listName = searchParams.get('listName');
   const [wordList, setWordList] = useState<SpellingWordList | null>(null);
@@ -87,11 +87,17 @@ export default function PracticeResults() {
         </table>
       </div>
 
-      {/* <div className="button-container"> */}
-        <Link href="/dashboard" className="large-button">
-          Done
-        </Link>
-      {/* </div> */}
+      <Link href="/dashboard" className="large-button">
+        Done
+      </Link>
     </div>
+  );
+}
+
+export default function PracticeResults() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PracticeResultsContent />
+    </Suspense>
   );
 }
