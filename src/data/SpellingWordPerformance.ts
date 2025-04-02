@@ -11,7 +11,7 @@ export class SpellingWordPerformance {
     this.streak = streak;
   }
 
-  combineWith(other: SpellingWordPerformance, isCorrect: boolean) {
+  combineWith(other: SpellingWordPerformance) {
     this.attempts += other.attempts;
     this.correct += other.correct;
     if (other.correct === other.attempts) {

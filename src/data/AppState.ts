@@ -1,7 +1,6 @@
 import { User } from './User';
 import { SpellingWordList } from './SpellingWordList';
 import { SpellingWordPerformance } from './SpellingWordPerformance';
-import { SpellingWordListPerformance } from './SpellingWordListPerformance';
 
 export class AppState {
   private static instance: AppState;

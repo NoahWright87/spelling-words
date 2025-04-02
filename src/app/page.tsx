@@ -71,7 +71,7 @@ export default function Home() {
 
       {deckCount > 0 && (
         <>
-          <h2 className="header">Who's playing?</h2>
+          <h2 className="header">Who&apos;s playing?</h2>
           <div className="user-buttons">
             {users.map((name, index) => (
               <UserCard
